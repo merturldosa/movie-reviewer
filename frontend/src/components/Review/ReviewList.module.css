@@ -1,0 +1,21 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  color: var(--color-text-tertiary);
+}
+
+.empty p {
+  margin: var(--spacing-sm) 0;
+  font-size: var(--font-size-base);
+}
+
+.empty p:first-child {
+  font-size: var(--font-size-h4);
+  color: var(--color-text-secondary);
+}

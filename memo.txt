@@ -1,0 +1,8 @@
+MongoDB
+username: msmooniot_db_user
+password: r6tdIngbDcqcWEbi
+
+username: moviereviewer
+password: UJB1pcqmfrqdmxCP
+
+mongodb+srv://moviereviewer:UJB1pcqmfrqdmxCP@movie-reviewer-cluster.dchf4te.mongodb.net/?retryWrites=true&w=majority&appName=movie-reviewer-cluster

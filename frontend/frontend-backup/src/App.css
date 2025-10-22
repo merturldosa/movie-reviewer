@@ -1,0 +1,47 @@
+/* 공통 레이아웃 */
+.layout { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }
+.content { width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+/* 헤더(nav) */
+.nav { background:#121212; border-bottom:1px solid #1f1f1f; position: sticky; top:0; z-index: 10; }
+.nav__inner { max-width: 1200px; margin: 0 auto; padding: 16px; display: flex; align-items: center; justify-content: space-between; }
+
+/* 좌측 로고 */
+.logo { font-weight: 700; letter-spacing: 0.2px; }
+.logo::first-letter { color:#6cf; }
+
+/* 우측 탭 + 검색 */
+.nav__right { display: flex; align-items: center; gap: 20px; }
+.nav__tabs { display: flex; align-items: center; gap: 12px; }
+.tab { padding: 6px 10px; border-radius: 8px; opacity:.85; }
+.tab:hover { background: #1d1d1d; opacity:1; }
+.tab.active { background:#2a2a2a; border:1px solid #3a3a3a; }
+
+/* 검색창 */
+.nav__search input {
+  width: 220px; height: 32px; border-radius: 8px; border:1px solid #2a2a2a;
+  background:#0c0c0c; color:#eee; padding: 0 10px; outline: none;
+}
+.nav__search input::placeholder { color:#777; }
+
+/* 메인(예고편/장르) */
+.hero { margin-top: 16px; }
+.hero__placeholder {
+  background:#d9d9d9; color:#c00; font-weight: 700; font-size: clamp(18px, 2.2vw, 28px);
+  height: 220px; border-radius: 6px; display: grid; place-items: center;
+}
+
+/* 장르 섹션 */
+.genres { margin-top: 28px; }
+.genres h2 { margin: 0 0 12px; }
+.genres__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+.genre__card {
+  height: 160px; background:#d9d9d9; border-radius: 6px; opacity:.95;
+}
+
+/* 검색/상세 placeholder 카드들 */
+.results__grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.result__card.placeholder, .detail__box.placeholder { background:#d9d9d9; border-radius: 6px; height: 180px; }
+
+/* 푸터 */
+.footer { border-top: 1px solid #1f1f1f; padding: 20px 16px; text-align: center; color:#aaa; }
