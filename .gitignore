@@ -1,5 +1,8 @@
+.gitignore
+
 # Dependencies
 node_modules/
+memo.txt
 
 # Environment variables
 .env
