@@ -33,17 +33,11 @@ const MovieCard = ({ movie, forceTVShow = false }) => {
     </>
   );
 
-  // Only make movies clickable, not TV shows
-  if (isTVShow) {
-    return (
-      <div className={`${styles.card} ${styles.disabled}`} title="TV 쇼는 현재 지원하지 않습니다">
-        {content}
-      </div>
-    );
-  }
+  // Determine the link path based on media type
+  const linkPath = isTVShow ? `/tv/${movie.id}` : `/movie/${movie.id}`;
 
   return (
-    <Link to={`/movie/${movie.id}`} className={styles.card}>
+    <Link to={linkPath} className={styles.card}>
       {content}
     </Link>
   );

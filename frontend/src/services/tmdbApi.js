@@ -133,4 +133,57 @@ export const fetchTVShows = async (networkId = 213, page = 1) => {
   }
 };
 
+/**
+ * Fetch TV show details
+ */
+export const fetchTVDetails = async (tvId) => {
+  try {
+    const response = await api.get(`/tv/${tvId}`, {
+      params: {
+        append_to_response: 'credits,videos',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching TV show details:', error);
+    throw error;
+  }
+};
+
+/**
+ * Search TV shows
+ */
+export const searchTVShows = async (query, page = 1) => {
+  try {
+    const response = await api.get('/search/tv', {
+      params: {
+        query,
+        page,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching TV shows:', error);
+    throw error;
+  }
+};
+
+/**
+ * Search multi (movies and TV shows)
+ */
+export const searchMulti = async (query, page = 1) => {
+  try {
+    const response = await api.get('/search/multi', {
+      params: {
+        query,
+        page,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching multi:', error);
+    throw error;
+  }
+};
+
 export default api;

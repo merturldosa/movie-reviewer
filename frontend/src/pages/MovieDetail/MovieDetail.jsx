@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchMovieDetails } from '../../services/tmdbApi';
+import { useParams, useLocation } from 'react-router-dom';
+import { fetchMovieDetails, fetchTVDetails } from '../../services/tmdbApi';
 import { useReviews } from '../../context/ReviewContext';
 import { useUser } from '../../context/UserContext';
 import {
@@ -18,6 +18,8 @@ import styles from './MovieDetail.module.css';
 
 const MovieDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const isTVShow = location.pathname.includes('/tv/');
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +48,7 @@ const MovieDetail = () => {
   const loadMovieDetails = async () => {
     try {
       setLoading(true);
-      const data = await fetchMovieDetails(id);
+      const data = isTVShow ? await fetchTVDetails(id) : await fetchMovieDetails(id);
       setMovie(data);
     } catch (err) {
       setError(err.message);
@@ -62,15 +64,20 @@ const MovieDetail = () => {
   if (error) {
     return (
       <div className={styles.error}>
-        <h2>영화 정보를 불러올 수 없습니다</h2>
+        <h2>{isTVShow ? 'TV 쇼' : '영화'} 정보를 불러올 수 없습니다</h2>
         <p>{error}</p>
       </div>
     );
   }
 
   if (!movie) {
-    return <div className={styles.error}>영화를 찾을 수 없습니다.</div>;
+    return <div className={styles.error}>{isTVShow ? 'TV 쇼를' : '영화를'} 찾을 수 없습니다.</div>;
   }
+
+  // Handle both movie and TV show properties
+  const title = movie.title || movie.name;
+  const releaseDate = movie.release_date || movie.first_air_date;
+  const runtime = movie.runtime || (movie.episode_run_time && movie.episode_run_time[0]);
 
   const backdropUrl = getImageUrl(
     movie.backdrop_path,
@@ -95,22 +102,28 @@ const MovieDetail = () => {
         <div className={styles.heroContent}>
           <div className={styles.posterContainer}>
             {posterUrl ? (
-              <img src={posterUrl} alt={movie.title} className={styles.poster} />
+              <img src={posterUrl} alt={title} className={styles.poster} />
             ) : (
               <div className={styles.noPoster}>No Image</div>
             )}
           </div>
 
           <div className={styles.info}>
-            <h1 className={styles.title}>{movie.title}</h1>
+            <div className={styles.titleContainer}>
+              <h1 className={styles.title}>{title}</h1>
+              {isTVShow && <span className={styles.mediaBadge}>TV</span>}
+            </div>
             {movie.tagline && <p className={styles.tagline}>{movie.tagline}</p>}
 
             <div className={styles.meta}>
               <span className={styles.rating}>
                 ⭐ {movie.vote_average.toFixed(1)}
               </span>
-              <span>{formatDate(movie.release_date)}</span>
-              <span>{formatRuntime(movie.runtime)}</span>
+              <span>{formatDate(releaseDate)}</span>
+              {runtime && <span>{formatRuntime(runtime)}</span>}
+              {isTVShow && movie.number_of_seasons && (
+                <span>{movie.number_of_seasons} 시즌</span>
+              )}
             </div>
 
             <div className={styles.genres}>
@@ -201,7 +214,7 @@ const MovieDetail = () => {
           setRefreshReviews(prev => prev + 1); // Trigger refresh
         }}
         movieId={movie.id}
-        movieTitle={movie.title}
+        movieTitle={title}
         moviePoster={posterUrl}
       />
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { searchMovies } from '../../services/tmdbApi';
+import { searchMulti } from '../../services/tmdbApi';
 import MovieCard from '../../components/Movie/MovieCard';
 import Loading from '../../components/UI/Loading';
 import styles from './Search.module.css';
@@ -9,7 +9,7 @@ const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
 
-  const [movies, setMovies] = useState([]);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -25,8 +25,12 @@ const Search = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await searchMovies(searchQuery, pageNum);
-      setMovies(pageNum === 1 ? data.results : [...movies, ...data.results]);
+      const data = await searchMulti(searchQuery, pageNum);
+      // Filter to only include movies and TV shows
+      const filteredResults = data.results.filter(
+        item => item.media_type === 'movie' || item.media_type === 'tv'
+      );
+      setResults(pageNum === 1 ? filteredResults : [...results, ...filteredResults]);
       setTotalPages(data.total_pages);
       setPage(pageNum);
     } catch (err) {
@@ -67,10 +71,10 @@ const Search = () => {
     <div className={styles.search}>
       <div className={styles.container}>
         <h1 className={styles.title}>
-          "{query}" 검색 결과 ({movies.length}개)
+          "{query}" 검색 결과 ({results.length}개)
         </h1>
 
-        {movies.length === 0 ? (
+        {results.length === 0 ? (
           <div className={styles.noResults}>
             <p>검색 결과가 없습니다.</p>
             <p>다른 검색어로 시도해보세요.</p>
@@ -78,8 +82,8 @@ const Search = () => {
         ) : (
           <>
             <div className={styles.grid}>
-              {movies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+              {results.map((item) => (
+                <MovieCard key={`${item.media_type}-${item.id}`} movie={item} />
               ))}
             </div>
 
