@@ -1,10 +1,33 @@
+import { useState, useEffect } from 'react';
 import { useReviews } from '../../context/ReviewContext';
 import ReviewCard from './ReviewCard';
 import styles from './ReviewList.module.css';
 
 const ReviewList = ({ movieId }) => {
   const { getMovieReviews } = useReviews();
-  const reviews = getMovieReviews(movieId);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadReviews();
+  }, [movieId]);
+
+  const loadReviews = async () => {
+    try {
+      setLoading(true);
+      const movieReviews = await getMovieReviews(movieId);
+      setReviews(Array.isArray(movieReviews) ? movieReviews : []);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      setReviews([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className={styles.empty}>리뷰를 불러오는 중...</div>;
+  }
 
   if (reviews.length === 0) {
     return (

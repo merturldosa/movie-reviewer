@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { useReviews } from '../../context/ReviewContext';
@@ -10,8 +10,30 @@ const MyReviews = () => {
   const { user } = useUser();
   const { getUserReviews } = useReviews();
   const [sortBy, setSortBy] = useState('latest');
+  const [userReviews, setUserReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const userReviews = getUserReviews(user.id);
+  useEffect(() => {
+    loadUserReviews();
+  }, [user]);
+
+  const loadUserReviews = async () => {
+    if (!user) {
+      setUserReviews([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      const reviews = await getUserReviews(user.id);
+      setUserReviews(Array.isArray(reviews) ? reviews : []);
+    } catch (error) {
+      console.error('Error loading user reviews:', error);
+      setUserReviews([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const sortedReviews = [...userReviews].sort((a, b) => {
     switch (sortBy) {
@@ -29,6 +51,16 @@ const MyReviews = () => {
   });
 
   const averageRating = calculateAverageRating(userReviews);
+
+  if (loading) {
+    return (
+      <div className={styles.myReviews}>
+        <div className={styles.container}>
+          <p>리뷰를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.myReviews}>

@@ -22,15 +22,25 @@ const MovieDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   const { getMovieReviews } = useReviews();
   const { user } = useUser();
 
-  const reviews = getMovieReviews(id);
-
   useEffect(() => {
     loadMovieDetails();
+    loadReviews();
   }, [id]);
+
+  const loadReviews = async () => {
+    try {
+      const movieReviews = await getMovieReviews(id);
+      setReviews(Array.isArray(movieReviews) ? movieReviews : []);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      setReviews([]);
+    }
+  };
 
   const loadMovieDetails = async () => {
     try {
@@ -103,7 +113,7 @@ const MovieDetail = () => {
             </div>
 
             <div className={styles.genres}>
-              {movie.genres?.map((genre) => (
+              {Array.isArray(movie.genres) && movie.genres.map((genre) => (
                 <span key={genre.id} className={styles.genre}>
                   {genre.name}
                 </span>
@@ -143,7 +153,7 @@ const MovieDetail = () => {
       )}
 
       {/* Cast Section */}
-      {movie.credits?.cast && movie.credits.cast.length > 0 && (
+      {Array.isArray(movie.credits?.cast) && movie.credits.cast.length > 0 && (
         <section className={styles.section}>
           <div className={styles.container}>
             <h2 className={styles.sectionTitle}>출연진</h2>
