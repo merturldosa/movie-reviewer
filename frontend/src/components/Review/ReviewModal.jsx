@@ -25,10 +25,12 @@ const ReviewModal = ({
     content: '',
     rating: 0,
     watchedDate: new Date().toISOString().split('T')[0],
+    images: [],
   });
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
 
   useEffect(() => {
     if (reviewToEdit) {
@@ -37,7 +39,9 @@ const ReviewModal = ({
         content: reviewToEdit.content,
         rating: reviewToEdit.rating,
         watchedDate: reviewToEdit.watchedDate?.split('T')[0] || '',
+        images: reviewToEdit.images || [],
       });
+      setImagePreviewUrls(reviewToEdit.images || []);
     } else {
       resetForm();
     }
@@ -49,8 +53,10 @@ const ReviewModal = ({
       content: '',
       rating: 0,
       watchedDate: new Date().toISOString().split('T')[0],
+      images: [],
     });
     setErrors({});
+    setImagePreviewUrls([]);
   };
 
   const handleChange = (field, value) => {
@@ -58,6 +64,51 @@ const ReviewModal = ({
     if (errors[field]) {
       setErrors({ ...errors, [field]: null });
     }
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+
+    // Limit to 3 images total
+    if (formData.images.length + files.length > 3) {
+      alert('최대 3개의 이미지만 업로드할 수 있습니다.');
+      return;
+    }
+
+    // Convert images to base64
+    const imagePromises = files.map(file => {
+      return new Promise((resolve, reject) => {
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('이미지 크기는 2MB 이하여야 합니다.');
+          reject(new Error('File too large'));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+
+    try {
+      const base64Images = await Promise.all(imagePromises);
+      setFormData({
+        ...formData,
+        images: [...formData.images, ...base64Images],
+      });
+      setImagePreviewUrls([...imagePreviewUrls, ...base64Images]);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    const newPreviews = imagePreviewUrls.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: newImages });
+    setImagePreviewUrls(newPreviews);
   };
 
   const handleSubmit = async (e) => {
@@ -158,6 +209,41 @@ const ReviewModal = ({
           value={formData.watchedDate}
           onChange={(e) => handleChange('watchedDate', e.target.value)}
         />
+
+        <div className={styles.imageUploadSection}>
+          <label className={styles.label}>
+            이미지 (선택사항, 최대 3개)
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageUpload}
+            className={styles.fileInput}
+            disabled={formData.images.length >= 3}
+          />
+          {formData.images.length >= 3 && (
+            <p className={styles.imageLimit}>최대 이미지 개수에 도달했습니다</p>
+          )}
+        </div>
+
+        {imagePreviewUrls.length > 0 && (
+          <div className={styles.imagePreviewContainer}>
+            {imagePreviewUrls.map((url, index) => (
+              <div key={index} className={styles.imagePreview}>
+                <img src={url} alt={`Preview ${index + 1}`} />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className={styles.removeImageButton}
+                  aria-label="Remove image"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className={styles.actions}>
           <Button

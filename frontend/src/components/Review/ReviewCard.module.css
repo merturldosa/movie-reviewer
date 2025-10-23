@@ -104,6 +104,27 @@
   margin: 0;
 }
 
+.reviewImages {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-md);
+}
+
+.reviewImage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-card-border);
+  cursor: pointer;
+  transition: transform var(--transition-base);
+}
+
+.reviewImage:hover {
+  transform: scale(1.05);
+}
+
 .edited {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);

@@ -135,6 +135,19 @@ const ReviewCard = ({ review, movieTitle, moviePoster, onReviewUpdate }) => {
           </p>
         )}
 
+        {Array.isArray(localReview.images) && localReview.images.length > 0 && (
+          <div className={styles.reviewImages}>
+            {localReview.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Review image ${index + 1}`}
+                className={styles.reviewImage}
+              />
+            ))}
+          </div>
+        )}
+
         {review.updatedAt !== review.createdAt && (
           <p className={styles.edited}>수정됨</p>
         )}
