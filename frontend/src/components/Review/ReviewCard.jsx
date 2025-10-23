@@ -5,17 +5,25 @@ import { formatDateShort, timeAgo } from '../../utils/helpers';
 import Rating from '../UI/Rating';
 import Button from '../UI/Button';
 import ReviewModal from './ReviewModal';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import styles from './ReviewCard.module.css';
 
-const ReviewCard = ({ review, movieTitle, moviePoster }) => {
+const ReviewCard = ({ review, movieTitle, moviePoster, onReviewUpdate }) => {
   const { user } = useUser();
-  const { removeReview } = useReviews();
+  const { removeReview, likeReview, dislikeReview } = useReviews();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [localReview, setLocalReview] = useState(review);
 
   const isOwner = user && user.id === review.userId;
   const shouldTruncate = review.content.length > 300;
+
+  // Check if current user has liked/disliked
+  const hasLiked = user && Array.isArray(localReview.likes) && localReview.likes.includes(user.id);
+  const hasDisliked = user && Array.isArray(localReview.dislikes) && localReview.dislikes.includes(user.id);
+
+  const likesCount = Array.isArray(localReview.likes) ? localReview.likes.length : 0;
+  const dislikesCount = Array.isArray(localReview.dislikes) ? localReview.dislikes.length : 0;
 
   const handleDelete = async () => {
     if (window.confirm('정말 이 리뷰를 삭제하시겠습니까?')) {
@@ -25,6 +33,42 @@ const ReviewCard = ({ review, movieTitle, moviePoster }) => {
         console.error('Error deleting review:', error);
         alert('리뷰 삭제에 실패했습니다.');
       }
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user) {
+      alert('좋아요를 누르려면 로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const updatedReview = await likeReview(localReview.id, user.id);
+      setLocalReview(updatedReview);
+      if (onReviewUpdate) {
+        onReviewUpdate(updatedReview);
+      }
+    } catch (error) {
+      console.error('Error liking review:', error);
+      alert('좋아요 처리에 실패했습니다.');
+    }
+  };
+
+  const handleDislike = async () => {
+    if (!user) {
+      alert('싫어요를 누르려면 로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const updatedReview = await dislikeReview(localReview.id, user.id);
+      setLocalReview(updatedReview);
+      if (onReviewUpdate) {
+        onReviewUpdate(updatedReview);
+      }
+    } catch (error) {
+      console.error('Error disliking review:', error);
+      alert('싫어요 처리에 실패했습니다.');
     }
   };
 
@@ -94,6 +138,25 @@ const ReviewCard = ({ review, movieTitle, moviePoster }) => {
         {review.updatedAt !== review.createdAt && (
           <p className={styles.edited}>수정됨</p>
         )}
+
+        <div className={styles.reactions}>
+          <button
+            className={`${styles.reactionButton} ${hasLiked ? styles.active : ''}`}
+            onClick={handleLike}
+            aria-label="Like review"
+          >
+            <FaThumbsUp />
+            <span>{likesCount}</span>
+          </button>
+          <button
+            className={`${styles.reactionButton} ${hasDisliked ? styles.active : ''}`}
+            onClick={handleDislike}
+            aria-label="Dislike review"
+          >
+            <FaThumbsDown />
+            <span>{dislikesCount}</span>
+          </button>
+        </div>
       </div>
 
       <ReviewModal

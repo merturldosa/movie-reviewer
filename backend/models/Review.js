@@ -57,6 +57,14 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    likes: {
+      type: [String], // Array of user IDs who liked this review
+      default: [],
+    },
+    dislikes: {
+      type: [String], // Array of user IDs who disliked this review
+      default: [],
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

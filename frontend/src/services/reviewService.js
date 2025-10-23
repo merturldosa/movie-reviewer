@@ -113,3 +113,29 @@ export const hasUserReviewedMovie = async (userId, movieId) => {
     throw error;
   }
 };
+
+/**
+ * Like a review
+ */
+export const likeReview = async (reviewId, userId) => {
+  try {
+    const response = await api.post(`/reviews/${reviewId}/like`, { userId });
+    return response.data;
+  } catch (error) {
+    console.error('Error liking review:', error);
+    throw error;
+  }
+};
+
+/**
+ * Dislike a review
+ */
+export const dislikeReview = async (reviewId, userId) => {
+  try {
+    const response = await api.post(`/reviews/${reviewId}/dislike`, { userId });
+    return response.data;
+  } catch (error) {
+    console.error('Error disliking review:', error);
+    throw error;
+  }
+};

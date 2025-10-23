@@ -161,3 +161,79 @@ exports.hasUserReviewedMovie = async (req, res) => {
     res.status(500).json({ message: 'Error checking review', error: error.message });
   }
 };
+
+/**
+ * Like a review
+ * POST /api/reviews/:id/like
+ */
+exports.likeReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const review = await Review.findById(id);
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    // Remove from dislikes if exists
+    review.dislikes = review.dislikes.filter(uid => uid !== userId);
+
+    // Toggle like
+    if (review.likes.includes(userId)) {
+      // Unlike: remove from likes
+      review.likes = review.likes.filter(uid => uid !== userId);
+    } else {
+      // Like: add to likes
+      review.likes.push(userId);
+    }
+
+    await review.save();
+    res.json(review);
+  } catch (error) {
+    console.error('Error liking review:', error);
+    res.status(500).json({ message: 'Error liking review', error: error.message });
+  }
+};
+
+/**
+ * Dislike a review
+ * POST /api/reviews/:id/dislike
+ */
+exports.dislikeReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const review = await Review.findById(id);
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    // Remove from likes if exists
+    review.likes = review.likes.filter(uid => uid !== userId);
+
+    // Toggle dislike
+    if (review.dislikes.includes(userId)) {
+      // Remove dislike: remove from dislikes
+      review.dislikes = review.dislikes.filter(uid => uid !== userId);
+    } else {
+      // Dislike: add to dislikes
+      review.dislikes.push(userId);
+    }
+
+    await review.save();
+    res.json(review);
+  } catch (error) {
+    console.error('Error disliking review:', error);
+    res.status(500).json({ message: 'Error disliking review', error: error.message });
+  }
+};

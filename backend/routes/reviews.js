@@ -30,4 +30,10 @@ router.put('/:id', reviewController.updateReview);
 // Delete a review
 router.delete('/:id', reviewController.deleteReview);
 
+// Like a review
+router.post('/:id/like', reviewController.likeReview);
+
+// Dislike a review
+router.post('/:id/dislike', reviewController.dislikeReview);
+
 module.exports = router;

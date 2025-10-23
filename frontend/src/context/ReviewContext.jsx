@@ -7,6 +7,8 @@ import {
   updateReview,
   deleteReview,
   getReviewsByUserId,
+  likeReview as likeReviewApi,
+  dislikeReview as dislikeReviewApi,
 } from '../services/reviewService';
 
 const ReviewContext = createContext();
@@ -94,6 +96,28 @@ export const ReviewProvider = ({ children }) => {
     }
   };
 
+  const likeReview = async (reviewId, userId) => {
+    try {
+      const updatedReview = await likeReviewApi(reviewId, userId);
+      setReviews(reviews.map(r => (r.id === reviewId ? updatedReview : r)));
+      return updatedReview;
+    } catch (error) {
+      console.error('Error liking review:', error);
+      throw error;
+    }
+  };
+
+  const dislikeReview = async (reviewId, userId) => {
+    try {
+      const updatedReview = await dislikeReviewApi(reviewId, userId);
+      setReviews(reviews.map(r => (r.id === reviewId ? updatedReview : r)));
+      return updatedReview;
+    } catch (error) {
+      console.error('Error disliking review:', error);
+      throw error;
+    }
+  };
+
   const value = {
     reviews,
     loading,
@@ -103,6 +127,8 @@ export const ReviewProvider = ({ children }) => {
     addReview,
     editReview,
     removeReview,
+    likeReview,
+    dislikeReview,
     refreshReviews: loadReviews,
   };
 
