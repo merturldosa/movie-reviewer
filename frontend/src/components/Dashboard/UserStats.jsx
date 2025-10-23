@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useUser } from '../../context/UserContext';
 import { useReviews } from '../../context/ReviewContext';
 import { calculateAverageRating } from '../../utils/helpers';
@@ -6,10 +7,25 @@ import styles from './UserStats.module.css';
 const UserStats = () => {
   const { user } = useUser();
   const { getUserReviews } = useReviews();
+  const [userReviews, setUserReviews] = useState([]);
+
+  useEffect(() => {
+    const loadUserReviews = async () => {
+      if (user) {
+        try {
+          const reviews = await getUserReviews(user.id);
+          setUserReviews(Array.isArray(reviews) ? reviews : []);
+        } catch (error) {
+          console.error('Error loading user reviews:', error);
+          setUserReviews([]);
+        }
+      }
+    };
+    loadUserReviews();
+  }, [user, getUserReviews]);
 
   if (!user) return null;
 
-  const userReviews = getUserReviews(user.id);
   const totalReviews = userReviews.length;
   const averageRating = calculateAverageRating(userReviews);
 

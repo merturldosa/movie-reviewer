@@ -73,8 +73,8 @@ export const formatRating = (rating) => {
  * Calculate average rating
  */
 export const calculateAverageRating = (reviews) => {
-  if (!reviews || reviews.length === 0) return 0;
-  const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+  if (!reviews || !Array.isArray(reviews) || reviews.length === 0) return 0;
+  const sum = reviews.reduce((acc, review) => acc + (review.rating || 0), 0);
   return (sum / reviews.length).toFixed(1);
 };
 
