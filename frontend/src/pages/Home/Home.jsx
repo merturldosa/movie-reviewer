@@ -18,13 +18,26 @@ const Home = () => {
   const navigate = useNavigate();
   const [featuredMovie, setFeaturedMovie] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userReviews, setUserReviews] = useState([]);
 
   // 사용자의 최근 리뷰 3개 가져오기
-  const userReviews = user
-    ? getUserReviews(user.id)
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 3)
-    : [];
+  useEffect(() => {
+    const loadUserReviews = async () => {
+      if (user) {
+        try {
+          const reviews = await getUserReviews(user.id);
+          const sortedReviews = reviews
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3);
+          setUserReviews(sortedReviews);
+        } catch (error) {
+          console.error('Error loading user reviews:', error);
+          setUserReviews([]);
+        }
+      }
+    };
+    loadUserReviews();
+  }, [user, getUserReviews]);
 
   // 추천 영화 가져오기
   useEffect(() => {

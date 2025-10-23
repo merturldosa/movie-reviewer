@@ -34,6 +34,7 @@ export const ReviewProvider = ({ children }) => {
       setReviews(allReviews);
     } catch (error) {
       console.error('Error loading reviews:', error);
+      setReviews([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
