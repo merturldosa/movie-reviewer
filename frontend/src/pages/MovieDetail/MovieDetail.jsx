@@ -23,6 +23,7 @@ const MovieDetail = () => {
   const [error, setError] = useState(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [refreshReviews, setRefreshReviews] = useState(0); // Trigger for refresh
 
   const { getMovieReviews } = useReviews();
   const { user } = useUser();
@@ -30,7 +31,7 @@ const MovieDetail = () => {
   useEffect(() => {
     loadMovieDetails();
     loadReviews();
-  }, [id]);
+  }, [id, refreshReviews]); // Add refreshReviews as dependency
 
   const loadReviews = async () => {
     try {
@@ -188,7 +189,7 @@ const MovieDetail = () => {
               리뷰 ({reviews.length})
             </h2>
           </div>
-          <ReviewList movieId={id} key={reviews.length} />
+          <ReviewList movieId={id} refreshTrigger={refreshReviews} />
         </div>
       </section>
 
@@ -197,7 +198,7 @@ const MovieDetail = () => {
         isOpen={isReviewModalOpen}
         onClose={() => {
           setIsReviewModalOpen(false);
-          loadReviews(); // Reload reviews after closing modal
+          setRefreshReviews(prev => prev + 1); // Trigger refresh
         }}
         movieId={movie.id}
         movieTitle={movie.title}

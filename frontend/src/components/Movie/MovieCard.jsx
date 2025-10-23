@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import { getImageUrl } from '../../utils/helpers';
 import styles from './MovieCard.module.css';
 
-const MovieCard = ({ movie }) => {
+const MovieCard = ({ movie, forceTVShow = false }) => {
   const posterUrl = getImageUrl(movie.poster_path);
   const title = movie.title || movie.name;
 
-  // Check if it's a TV show (has 'name' but no 'title', or media_type is 'tv')
-  const isMovie = movie.title || movie.media_type === 'movie';
-  const isTVShow = movie.media_type === 'tv' || (!movie.title && movie.name);
+  // Check if it's a TV show
+  // Priority: forceTVShow prop > media_type > title/name detection
+  const isTVShow = forceTVShow || movie.media_type === 'tv' || (!movie.title && movie.name);
 
   const content = (
     <>

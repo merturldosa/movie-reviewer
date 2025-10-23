@@ -46,13 +46,16 @@ const MovieRow = ({ title, endpoint, params = {} }) => {
     return null;
   }
 
+  // Check if this is a TV category (Netflix Originals or any /tv endpoint)
+  const isTVCategory = endpoint.includes('/tv');
+
   return (
     <div className={styles.row}>
       <h2 className={styles.title}>{title}</h2>
       <div className={styles.scrollContainer}>
         <div className={styles.movieList}>
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard key={movie.id} movie={movie} forceTVShow={isTVCategory} />
           ))}
         </div>
       </div>

@@ -3,14 +3,14 @@ import { useReviews } from '../../context/ReviewContext';
 import ReviewCard from './ReviewCard';
 import styles from './ReviewList.module.css';
 
-const ReviewList = ({ movieId }) => {
+const ReviewList = ({ movieId, refreshTrigger = 0 }) => {
   const { getMovieReviews } = useReviews();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadReviews();
-  }, [movieId]);
+  }, [movieId, refreshTrigger]); // Add refreshTrigger as dependency
 
   const loadReviews = async () => {
     try {
