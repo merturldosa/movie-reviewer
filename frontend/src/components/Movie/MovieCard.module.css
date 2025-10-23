@@ -58,3 +58,25 @@
   color: var(--color-rating);
   font-weight: var(--font-weight-medium);
 }
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.disabled:hover {
+  transform: none;
+}
+
+.tvBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(147, 51, 234, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 5;
+}

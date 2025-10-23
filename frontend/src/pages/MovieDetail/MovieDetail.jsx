@@ -188,14 +188,17 @@ const MovieDetail = () => {
               리뷰 ({reviews.length})
             </h2>
           </div>
-          <ReviewList movieId={id} />
+          <ReviewList movieId={id} key={reviews.length} />
         </div>
       </section>
 
       {/* Review Modal */}
       <ReviewModal
         isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          loadReviews(); // Reload reviews after closing modal
+        }}
         movieId={movie.id}
         movieTitle={movie.title}
         moviePoster={posterUrl}
