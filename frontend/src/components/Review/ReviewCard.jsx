@@ -5,7 +5,8 @@ import { formatDateShort, timeAgo } from '../../utils/helpers';
 import Rating from '../UI/Rating';
 import Button from '../UI/Button';
 import ReviewModal from './ReviewModal';
-import { FaEdit, FaTrash, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import CommentSection from './CommentSection';
+import { FaEdit, FaTrash, FaThumbsUp, FaThumbsDown, FaComment } from 'react-icons/fa';
 import styles from './ReviewCard.module.css';
 
 const ReviewCard = ({ review, movieTitle, moviePoster, onReviewUpdate }) => {
@@ -13,6 +14,7 @@ const ReviewCard = ({ review, movieTitle, moviePoster, onReviewUpdate }) => {
   const { removeReview, likeReview, dislikeReview } = useReviews();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [localReview, setLocalReview] = useState(review);
 
   const isOwner = user && user.id === review.userId;
@@ -169,7 +171,17 @@ const ReviewCard = ({ review, movieTitle, moviePoster, onReviewUpdate }) => {
             <FaThumbsDown />
             <span>{dislikesCount}</span>
           </button>
+          <button
+            className={`${styles.reactionButton} ${showComments ? styles.active : ''}`}
+            onClick={() => setShowComments(!showComments)}
+            aria-label="Toggle comments"
+          >
+            <FaComment />
+            <span>{showComments ? '댓글 숨기기' : '댓글'}</span>
+          </button>
         </div>
+
+        {showComments && <CommentSection reviewId={localReview.id} />}
       </div>
 
       <ReviewModal

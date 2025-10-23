@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const reviewRoutes = require('./routes/reviews');
+const commentRoutes = require('./routes/comments');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -47,6 +49,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       reviews: '/api/reviews',
+      comments: '/api/comments',
     },
   });
 });
