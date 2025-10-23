@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const reviewRoutes = require('./routes/reviews');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
+const recommendationRoutes = require('./routes/recommendations');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -53,6 +55,7 @@ app.get('/', (req, res) => {
       reviews: '/api/reviews',
       comments: '/api/comments',
       users: '/api/users',
+      recommendations: '/api/recommendations',
     },
   });
 });

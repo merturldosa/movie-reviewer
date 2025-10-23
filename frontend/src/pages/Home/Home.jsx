@@ -8,6 +8,7 @@ import { IMAGE_SIZES } from '../../utils/constants';
 import MovieRow from '../../components/Movie/MovieRow';
 import ReviewCard from '../../components/Review/ReviewCard';
 import UserStats from '../../components/Dashboard/UserStats';
+import Recommendations from '../../components/Recommendations/Recommendations';
 import { MOVIE_CATEGORIES } from '../../utils/constants';
 import { FaSearch } from 'react-icons/fa';
 import styles from './Home.module.css';
@@ -165,6 +166,9 @@ const Home = () => {
           </div>
         )}
       </div>
+
+      {/* 추천 영화 섹션 */}
+      <Recommendations />
 
       <div className={styles.categories}>
         {MOVIE_CATEGORIES.map((category) => (
