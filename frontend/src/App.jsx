@@ -7,6 +7,7 @@ import MovieDetail from './pages/MovieDetail/MovieDetail';
 import Search from './pages/Search/Search';
 import MyReviews from './pages/MyReviews/MyReviews';
 import './styles/global.css';
+import './utils/keepAlive'; // Import keep-alive service (auto-starts in production)
 
 function App() {
   return (
