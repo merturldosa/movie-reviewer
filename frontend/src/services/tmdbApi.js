@@ -16,10 +16,10 @@ const api = axios.create({
 export const fetchMoviesByCategory = async (endpoint, params = {}) => {
   try {
     const response = await api.get(endpoint, { params });
-    return response.data.results;
+    return response.data.results || [];
   } catch (error) {
     console.error('Error fetching movies:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -90,10 +90,10 @@ export const fetchTopRatedMovies = async (page = 1) => {
 export const fetchTrendingMovies = async (timeWindow = 'week') => {
   try {
     const response = await api.get(`/trending/all/${timeWindow}`);
-    return response.data.results;
+    return response.data.results || [];
   } catch (error) {
     console.error('Error fetching trending movies:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -126,10 +126,10 @@ export const fetchTVShows = async (networkId = 213, page = 1) => {
         page,
       },
     });
-    return response.data.results;
+    return response.data.results || [];
   } catch (error) {
     console.error('Error fetching TV shows:', error);
-    throw error;
+    return [];
   }
 };
 

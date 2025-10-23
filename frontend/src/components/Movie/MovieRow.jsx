@@ -16,11 +16,13 @@ const MovieRow = ({ title, endpoint, params = {} }) => {
   const loadMovies = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await fetchMoviesByCategory(endpoint, params);
-      setMovies(data);
+      setMovies(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(`Error loading movies for ${title}:`, err);
       setError(err.message || '영화를 불러오는데 실패했습니다.');
+      setMovies([]);
     } finally {
       setLoading(false);
     }
